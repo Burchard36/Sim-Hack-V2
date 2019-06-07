@@ -22,9 +22,10 @@ function sanitizeUsername(username) {
 }
 function sanitizePassword(password) {
     return /^[0-9a-zA-Z]+$/.test(password);
+}
 
-// Socket.io server listens to our app
-var io = require('socket.io').listen(app);
+    // Socket.io server listens to our app
+    var io = require('socket.io').listen(app);
 
 io.on('connection', function (socket) {
     socket.on('registerUser', function (data) {
@@ -45,21 +46,21 @@ io.on('connection', function (socket) {
                                     con.query("SELECT * FROM 'Users' WHERE 'Email' = ?", [Email], function (err, fields) {
                                         if (err) throw err;
                                         if (fields[0] === undefined || fields[0] === null || fields[0] === "") {
-
+                                            con.query("UPDATE 'Game' SET ")
                                         } else {
                                             let data = { StatusCode: "Failed", Reason: "Email is taken!" };
                                             socket.emit('registerData', data);
                                             return;
                                         }
-                                    })
+                                    });
                                 } else {
                                     let data = { StatusCode: "Failed", Reason: "Username is taken!" };
                                     socket.emit('registerData', data);
                                     return;
                                 }
-                            }).catch(console.error);
+                            });
                         } else {
-                            let data = { StatusCode: Failed, Reason: "Password strength is not strong enough!" };
+                            let data = { StatusCode: "Failed", Reason: "Password strength is not strong enough!" };
                             socket.emit('registerData', data);
                             return;
                         }
@@ -74,17 +75,19 @@ io.on('connection', function (socket) {
                     return;
                 }
             } else {
-                let data = { StatusCode: "Failed", Reason: "Username is too longer" };
+                let data = { StatusCode: "Failed", Reason: "Username is too longe" };
                 socket.emit('registerData', data);
                 return;
             }
         } else {
             let data = { StatusCode: "Failed", Reason: "Username contains illegal character" };
-            socket.emit('regsiterData', data);
+            socket.emit('registerData', data);
             return;
         }
-    }
+        socket.removeAllListeners();
+    });
 });
+
 
 
 app.listen(3000);
