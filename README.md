@@ -1,2 +1,2 @@
 # Sim-Hack-V2
-Remake of my olc C++ Sim Hack game but its rewritten in NodeJS
+This is a MMMO MUD base game in development, please stay tuned.
