@@ -3,11 +3,11 @@ const mysql = require('mysql');
 
 //Connect to mysql database
 const con = mysql.createConnection({
-    host: "serverhouse.now.im",
-    port: "3306",
-    user: "admin",
-    password: "Kittens10@",
-    database: 'Game'
+    host: "",
+    port: "",
+    user: "",
+    password: "",
+    database: ''
 })
 function messages() {
     console.log('\033c');
