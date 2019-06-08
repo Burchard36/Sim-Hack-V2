@@ -30,6 +30,34 @@ function loginSystem() {
     const collecter = function () {
         rl.question('', (answer) => {
             if (answer.toUpperCase() === "LOGIN") {
+                console.log('\033[2J');
+                process.stdout.write('\033c');
+                console.log('\x1b[36m%s\x1b[0m', "\t\t\t\t\t       Type your username.");
+
+                rl.question('', (username) => {
+                    let UserName = username;
+                    process.stdout.write('\033c');
+                    console.log('\x1b[36m%s\x1b[0m', "\t\t\t\t\t       Type your password.");
+
+                    rl.question('', (password) => {
+                        let Password = password;
+                        process.stdout.write('\033c');
+                        console.log('\x1b[32m', "\t\t\t\t\t       Type your password.");
+
+                        let data = { Username: UserName, Password: Password };
+                        socket.emit('loginUser', data);
+                        socket.on('loginData', function (data) {
+                            if (data.StatusCode === "Failed") {
+
+                            } else if (data.StatusCode === "Success") {
+                                var socket = io.connect('http://serverhouse.now.im:3000', {
+                                    reconnection: true
+                                });
+
+                            }
+                        });
+                    });
+                });
             } else if (answer.toUpperCase() === "REGISTER") {
                 console.log('\033[2J');
                 process.stdout.write('\033c');
