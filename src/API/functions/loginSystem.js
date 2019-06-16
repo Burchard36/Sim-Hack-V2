@@ -1,8 +1,9 @@
 const readline = require('readline');
 var io = require('socket.io-client');
-var socket = io.connect('http://serverhouse.now.im:3000', {
+var socket = io.connect('1', {
     reconnection: true
 });
+const sys = require("../functions/tryTutorial");
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -45,13 +46,15 @@ function loginSystem() {
                                     return;
                                 }, 2000);
                             } else if (data.StatusCode === "Success") {
-                                var socket = io.connect('http://serverhouse.now.im:3001', {
+                                console.log("test Success");
+                                socket = io.connect('1', {
                                     reconnection: true
                                 });
                                 socket.emit('pass', data);
                                 process.stdout.write('\033c');
                                 console.log("\x1b[32m", "\x1b[5m", "\t\t\t\t     " + data.Reason);
                                 socket.on("passData", function (data) {
+                                    console.log("test passData");
                                     if (data.StatusCode === "Failed") {
                                         // If failed to authenticate to game server get the fuck out
                                         process.stdout.write('\033c');
@@ -62,7 +65,10 @@ function loginSystem() {
                                         }, 2000);
                                     } else if (data.StatusCode === "Success") {
                                         // get some data bro
-                                        socket.emit("continue", data);
+                                     
+                                       // socket.emit("continue", data);
+                                        console.log("test continue");
+                                        sys.loadTutorial(data.UserID, data.Username);
                                     }
                                 })
                             }
@@ -113,6 +119,8 @@ function loginSystem() {
                                             restartSystem();
                                             return;
                                         }, 2000);
+                                        return 2;
+                                   
                                     }
                                     socket.removeAllListeners();
                                 });
