@@ -3,16 +3,6 @@ var io = require('socket.io-client');
 var socket = io.connect('http://serverhouse.now.im:3000', {
     reconnection: true
 });
-const mysql = require('mysql');
-
-//Connect to mysql database
-const con = mysql.createConnection({
-    host: "",
-    port: "",
-    user: "",
-    password: "",
-    database: ''
-})
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -48,12 +38,33 @@ function loginSystem() {
                         socket.emit('loginUser', data);
                         socket.on('loginData', function (data) {
                             if (data.StatusCode === "Failed") {
-
+                                process.stdout.write('\033c');
+                                console.log("\x1b[31m", "\t\t\t\t\t       " + data.Reason);
+                                setTimeout(function () {
+                                    restartSystem();
+                                    return;
+                                }, 2000);
                             } else if (data.StatusCode === "Success") {
-                                var socket = io.connect('http://serverhouse.now.im:3000', {
+                                var socket = io.connect('http://serverhouse.now.im:3001', {
                                     reconnection: true
                                 });
-
+                                socket.emit('pass', data);
+                                process.stdout.write('\033c');
+                                console.log("\x1b[32m", "\x1b[5m", "\t\t\t\t     " + data.Reason);
+                                socket.on("passData", function (data) {
+                                    if (data.StatusCode === "Failed") {
+                                        // If failed to authenticate to game server get the fuck out
+                                        process.stdout.write('\033c');
+                                        console.log("\x1b[31m", "\t\t\t\t\t       " + data.Reason);
+                                        setTimeout(function () {
+                                            restartSystem();
+                                            return;
+                                        }, 2000);
+                                    } else if (data.StatusCode === "Success") {
+                                        // get some data bro
+                                        socket.emit("continue", data);
+                                    }
+                                })
                             }
                         });
                     });
@@ -90,14 +101,18 @@ function loginSystem() {
                                 socket.emit('registerUser', data);
                                 socket.on('registerData', function (data) {
                                     if (data.StatusCode === "Failed") {
-                                        console.log("\x1b[31m", data.Reason);
+                                        console.log("\x1b[31m", "\t\t\t\t\t       " + data.Reason);
                                         setTimeout(function () {
                                             restartSystem();
                                             return;
                                         }, 2000);
-                                    } else if (data.statusCode === "Success") {
+                                    } else if (data.StatusCode === "Pass") {
                                         console.log("\x1b[31m");
-                                        console.log("\x1b[32m", "Sending requests to Sim Hack server...");
+                                        console.log("\x1b[32m", "\x1b[5m", "\t\t\t\t\tAccount successfully registered you may now login! (Redirecting)");
+                                        setTimeout(function () {
+                                            restartSystem();
+                                            return;
+                                        }, 2000);
                                     }
                                     socket.removeAllListeners();
                                 });
